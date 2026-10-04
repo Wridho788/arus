@@ -45,7 +45,7 @@ A deployed base URL runs only the two release smoke journeys, with no local web 
 
 QA screenshots are regenerated under `test-results/`. Final portfolio screenshots live in `docs/portfolio/screenshots/`; `capture:portfolio` starts its own production preview on port 4176 and replaces those nine PNGs and their manifest. Inspect the images after any UI changes. Local preview and the public deployment use separate browser origins and therefore separate saved data.
 
-The remaining handoff is publishing the new documentation/testing materials and linking the case study from the owner's portfolio. No deployment is required to reproduce the current verified application behavior. See [Milestones](MILESTONES.md#next-actions).
+The documentation/testing package was published in Arus commit `351e745`. The portfolio integration was published in `ridho-portfolio` commit `66f4474`, with a Selected Work card and `/case-studies/arus/` page. The portfolio static build and desktop/phone checks passed; verify its public hosting update separately. See [Milestones](MILESTONES.md#next-actions).
 
 ## Working rules
 

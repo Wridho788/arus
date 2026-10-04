@@ -62,4 +62,4 @@ Tasks 4–5 were subsequently completed on 2026-10-04: production preview, publi
 
 The browser matrix remains Chromium with emulated viewport sizes. Physical phones, Firefox, Safari and assistive-technology testing remain unverified.
 
-At the task 2–3 baseline no Git repository existed. The owner subsequently initialized and published [the source repository](https://github.com/Wridho788/arus) and deployed [the demo](https://arus-web.vercel.app/app). New handoff material in the current checkout has not been pushed by this task.
+At the task 2–3 baseline no Git repository existed. The owner subsequently initialized and published [the source repository](https://github.com/Wridho788/arus) and deployed [the demo](https://arus-web.vercel.app/app). On the owner's subsequent instruction, handoff material was committed and pushed as `351e745`; the portfolio integration was committed and pushed as `66f4474` in [ridho-portfolio](https://github.com/Wridho788/ridho-portfolio).

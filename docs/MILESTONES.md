@@ -6,9 +6,8 @@ Status is updated as work is completed. A checked box means the stated deliverab
 
 ## Next actions
 
-1. Commit/push the new testing configuration, documentation and screenshot package when ready to publish this handoff.
-2. Link the [case study](portfolio/CASE_STUDY.md), [demo](https://arus-web.vercel.app/app) and [source](https://github.com/Wridho788/arus) from the owner's portfolio.
-3. Re-run the production/public checks after future application changes.
+1. Verify the portfolio hosting update after publishing commit `66f4474` in [ridho-portfolio](https://github.com/Wridho788/ridho-portfolio). Local static export and desktop/phone browser checks passed for `/case-studies/arus/`; public availability is a separate check.
+2. Re-run the production/public checks after future application changes.
 
 ## M0 — Product contract
 
@@ -46,7 +45,7 @@ Status is updated as work is completed. A checked box means the stated deliverab
 - [x] Owner deployed the static build to Vercel.
 - [x] Verify public desktop and phone viewport smoke journeys, including direct `/app` navigation.
 - [x] Record URL, verification date and known limitations in README.
-- [ ] Publish the new local handoff documents, screenshots and test configuration.
-- [ ] Link the finished project from the portfolio after the case study is ready.
+- [x] Publish the handoff documents, screenshots and test configuration: Arus commit `351e745` pushed to `origin/master`.
+- [x] Link the finished project from the portfolio: `ridho-portfolio` commit `66f4474` pushed to `origin/master`, adding a Selected Work card, screenshot and case study with demo/source links.
 
-**Gate:** demo and source are public; the final handoff package still awaits publication and a link from the owner's portfolio.
+**Gate:** demo, source and handoff package are public; portfolio integration is pushed and locally verified. Confirm the portfolio host serves the new page after its deployment finishes.
