@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/domain.test.ts","./src/domain.ts","./src/main.tsx","./src/storage.test.ts","./src/storage.ts","./vite.config.ts","./playwright.config.ts","./tests/contrast.spec.ts","./tests/failures.spec.ts","./tests/flows.spec.ts","./tests/helpers.ts","./tests/mvp.spec.ts","./tests/responsive.spec.ts"],"version":"5.9.3"}

@@ -1,0 +1,146 @@
+import { test, expect } from '@playwright/test';
+import { addExpense, expectMoney, navigate, openApp, storageKey } from './helpers';
+
+test.beforeEach(async ({ page }) => openApp(page));
+
+test('transaction amount, category, month and type edits recalculate all affected views', async ({ page }) => {
+  const expenseTotal = page.locator('.summary-card').filter({ hasText: 'Total pengeluaran' });
+  const incomeTotal = page.locator('.summary-card').filter({ hasText: 'Total pemasukan' });
+  await addExpense(page, 'Perubahan lintas bulan', '50000');
+  await expectMoney(expenseTotal, '4.061.000');
+  await expectMoney(page.locator('.summary-primary'), '6.189.000');
+  await expectMoney(page.locator('.budget-mini').filter({ hasText: 'Makanan & minuman' }), '835.000');
+  await navigate(page, 'Transaksi');
+  await page.getByRole('button', { name: 'Edit Perubahan lintas bulan', exact: true }).click();
+  const edit = page.getByRole('dialog', { name: 'Edit transaksi' });
+  await edit.getByLabel('Nominal (Rp)').fill('70000');
+  await edit.getByRole('combobox', { name: 'Kategori', exact: true }).selectOption('shopping');
+  await edit.getByLabel('Tanggal', { exact: true }).fill('2026-09-30');
+  await edit.getByRole('button', { name: 'Simpan perubahan' }).click();
+  await expect(page.locator('.transaction-row').filter({ hasText: 'Perubahan lintas bulan' })).toHaveCount(0);
+  await navigate(page, 'Ringkasan');
+  await expectMoney(expenseTotal, '4.011.000');
+  await expectMoney(page.locator('.budget-mini').filter({ hasText: 'Makanan & minuman' }), '785.000');
+  await page.getByRole('button', { name: 'Bulan sebelumnya' }).click();
+  await expectMoney(expenseTotal, '70.000');
+  await page.getByRole('button', { name: 'Edit Perubahan lintas bulan', exact: true }).click();
+  await edit.getByRole('button', { name: 'Pemasukan', exact: true }).click();
+  await edit.getByLabel('Nominal (Rp)').fill('90000');
+  await edit.getByLabel('Tanggal', { exact: true }).fill('2026-10-04');
+  await edit.getByRole('button', { name: 'Simpan perubahan' }).click();
+  await expectMoney(expenseTotal, '0');
+  await page.getByRole('button', { name: 'Bulan berikutnya' }).click();
+  await expectMoney(incomeTotal, '10.340.000');
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expectMoney(incomeTotal, '10.340.000');
+  await navigate(page, 'Transaksi');
+  const before = await page.evaluate((key) => localStorage.getItem(key), storageKey);
+  page.once('dialog', (dialog) => dialog.dismiss());
+  await page.getByRole('button', { name: 'Hapus Perubahan lintas bulan', exact: true }).click();
+  expect(await page.evaluate((key) => localStorage.getItem(key), storageKey)).toBe(before);
+  page.once('dialog', (dialog) => dialog.accept());
+  await page.getByRole('button', { name: 'Hapus Perubahan lintas bulan', exact: true }).click();
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expectMoney(incomeTotal, '10.250.000');
+  await expectMoney(expenseTotal, '4.011.000');
+});
+
+test('budget CRUD recalculates overspending, rejects duplicates and preserves transactions', async ({ page }) => {
+  await navigate(page, 'Anggaran');
+  await page.getByRole('button', { name: 'Buat anggaran', exact: true }).click();
+  let dialog = page.getByRole('dialog', { name: 'Tambah anggaran' });
+  await dialog.getByRole('combobox', { name: 'Kategori', exact: true }).selectOption('health');
+  await dialog.getByLabel('Batas pengeluaran (Rp)').fill('100000');
+  await dialog.getByRole('button', { name: 'Buat anggaran', exact: true }).click();
+  await navigate(page, 'Transaksi');
+  await addExpense(page, 'Periksa kesehatan', '120000', 'health');
+  await navigate(page, 'Anggaran');
+  const card = page.locator('.budget-card').filter({ hasText: 'Kesehatan' });
+  await expect(card).toContainText(/Melebihi Rp\s*20\.000/);
+  await expect(card).toContainText('120% terpakai');
+  await page.getByRole('button', { name: 'Edit anggaran Kesehatan', exact: true }).click();
+  dialog = page.getByRole('dialog', { name: 'Edit anggaran' });
+  await dialog.getByLabel('Batas pengeluaran (Rp)').fill('150000');
+  await dialog.getByRole('combobox', { name: 'Kategori', exact: true }).selectOption('food');
+  await dialog.getByRole('button', { name: 'Simpan perubahan' }).click();
+  await expect(dialog.getByRole('alert')).toContainText('sudah memiliki anggaran');
+  await dialog.getByRole('combobox', { name: 'Kategori', exact: true }).selectOption('health');
+  await dialog.getByRole('button', { name: 'Simpan perubahan' }).click();
+  await expect(card).toContainText(/Rp\s*30\.000 tersisa/);
+  await expect(card).toContainText('80% terpakai');
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await navigate(page, 'Anggaran');
+  await expect(card).toContainText('80% terpakai');
+  page.once('dialog', (confirmation) => confirmation.dismiss());
+  await page.getByRole('button', { name: 'Hapus anggaran Kesehatan', exact: true }).click();
+  await expect(card).toBeVisible();
+  page.once('dialog', (confirmation) => confirmation.accept());
+  await page.getByRole('button', { name: 'Hapus anggaran Kesehatan', exact: true }).click();
+  await expect(card).toHaveCount(0);
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await navigate(page, 'Transaksi');
+  await expect(page.locator('.transaction-row').filter({ hasText: 'Periksa kesehatan' })).toBeVisible();
+});
+
+test('reset cancellation preserves changes and confirmation restores one current-month seed', async ({ page }) => {
+  await addExpense(page, 'Sebelum reset', '20000');
+  const before = await page.evaluate((key) => localStorage.getItem(key), storageKey);
+  page.once('dialog', (dialog) => dialog.dismiss());
+  await page.getByRole('button', { name: 'Atur ulang data contoh' }).click();
+  expect(await page.evaluate((key) => localStorage.getItem(key), storageKey)).toBe(before);
+  await page.getByRole('button', { name: 'Bulan sebelumnya' }).click();
+  page.once('dialog', (dialog) => dialog.accept());
+  await page.getByRole('button', { name: 'Atur ulang data contoh' }).click();
+  await expect(page.locator('.month-picker')).toContainText('Oktober 2026');
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  const saved = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), storageKey);
+  expect(saved.transactions).toHaveLength(10);
+  expect(saved.budgets).toHaveLength(4);
+  expect(saved.transactions.every((item: { date: string }) => item.date.startsWith('2026-10-'))).toBe(true);
+  await expectMoney(page.locator('.summary-card').filter({ hasText: 'Total pengeluaran' }), '4.011.000');
+});
+
+test('invalid inputs stay in the form and never change storage', async ({ page }) => {
+  const before = await page.evaluate((key) => localStorage.getItem(key), storageKey);
+  await page.getByRole('button', { name: 'Catat transaksi', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Tambah transaksi' });
+  await dialog.getByLabel('Judul transaksi').fill('Validasi');
+  for (const amount of ['0', '-1', '1.5', '9007199254740992']) {
+    await dialog.getByLabel('Nominal (Rp)').fill(amount);
+    await dialog.getByRole('button', { name: 'Simpan transaksi' }).click();
+    await expect(dialog.getByRole('alert')).toContainText('Nominal');
+  }
+  await dialog.getByLabel('Nominal (Rp)').fill('50000');
+  await dialog.getByLabel('Tanggal', { exact: true }).fill('');
+  await dialog.getByRole('button', { name: 'Simpan transaksi' }).click();
+  await expect(dialog.getByRole('alert')).toContainText('Tanggal');
+  await dialog.getByLabel('Tanggal', { exact: true }).fill('2026-10-04');
+  await dialog.getByLabel('Judul transaksi').fill('   ');
+  await dialog.getByRole('button', { name: 'Simpan transaksi' }).click();
+  await expect(dialog.getByRole('alert')).toContainText('Judul');
+  expect(await page.evaluate((key) => localStorage.getItem(key), storageKey)).toBe(before);
+  await dialog.getByRole('button', { name: 'Batal', exact: true }).click();
+  await navigate(page, 'Anggaran');
+  await page.getByRole('button', { name: 'Buat anggaran', exact: true }).click();
+  const budget = page.getByRole('dialog', { name: 'Tambah anggaran' });
+  await budget.getByLabel('Batas pengeluaran (Rp)').fill('0');
+  await budget.getByRole('button', { name: 'Buat anggaran', exact: true }).click();
+  await expect(budget.getByRole('alert')).toContainText('Batas anggaran');
+  expect(await page.evaluate((key) => localStorage.getItem(key), storageKey)).toBe(before);
+});
+
+test('an empty saved dataset remains empty after reload and can receive new records', async ({ page }) => {
+  await page.evaluate((key) => localStorage.setItem(key, JSON.stringify({ version: 1, transactions: [], budgets: [] })), storageKey);
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expectMoney(page.locator('.summary-primary'), '0');
+  await expect(page.getByText('Belum ada pengeluaran pada bulan ini.')).toBeVisible();
+  await navigate(page, 'Transaksi');
+  await expect(page.getByRole('heading', { name: 'Belum ada transaksi' })).toBeVisible();
+  await navigate(page, 'Anggaran');
+  await expect(page.getByRole('heading', { name: 'Belum ada anggaran' })).toBeVisible();
+  await navigate(page, 'Transaksi');
+  await addExpense(page, 'Catatan pertama', '10000');
+  await expect(page.locator('.transaction-row')).toHaveCount(1);
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expectMoney(page.locator('.summary-card').filter({ hasText: 'Total pengeluaran' }), '10.000');
+});
