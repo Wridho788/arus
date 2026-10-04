@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:production": "playwright test --config playwright.production.config.ts",
+    "capture:portfolio": "node scripts/capture-portfolio.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

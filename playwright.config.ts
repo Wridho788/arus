@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
+  testIgnore: '**/release/**',
   fullyParallel: true,
   // Keep one browser worker on memory-constrained development machines.
   workers: 1,

@@ -2,13 +2,13 @@
 
 Status is updated as work is completed. A checked box means the stated deliverable exists and the evidence noted below was observed; the milestone gate remains open until its separate verification is complete.
 
-**Current state (2026-10-04):** tasks 1–3 are complete locally. Functionality, storage failures, keyboard behavior and responsive layouts were verified in Chromium; production preview and deployment remain open. See [Verification](VERIFICATION.md) for the evidence matrix and command results.
+**Current state (2026-10-04):** tasks 1–5 are complete. The owner published the source and deployed the app. Production preview and public desktop/phone smoke checks passed; final screenshots and a case study are ready. See [Release verification](portfolio/RELEASE_VERIFICATION.md).
 
 ## Next actions
 
-1. **Task 4 — Production verification:** preview the built artifact, including direct navigation to `/app`, and check the core journeys against that artifact.
-2. **Task 5 — Portfolio material:** prepare publication-quality screenshots, a short case study, and complete handoff documentation. QA screenshots already exist as test output.
-3. **Task 6 — Publish and deploy:** prepare public source, deploy the static site, verify public landing/app URLs, and record the deployment URL/date.
+1. Commit/push the new testing configuration, documentation and screenshot package when ready to publish this handoff.
+2. Link the [case study](portfolio/CASE_STUDY.md), [demo](https://arus-web.vercel.app/app) and [source](https://github.com/Wridho788/arus) from the owner's portfolio.
+3. Re-run the production/public checks after future application changes.
 
 ## M0 — Product contract
 
@@ -35,17 +35,18 @@ Status is updated as work is completed. A checked box means the stated deliverab
 - [x] Pass typecheck, lint, 12 unit tests, and production build locally; command evidence is recorded in Verification.
 - [x] Install Playwright Chromium and pass 21 end-to-end tests with retries disabled.
 - [x] Review keyboard flow, focus, mobile layout, primary text contrast and demo labeling.
-- [ ] Verify the production preview and direct `/app` navigation against the built artifact.
-- [ ] Add project screenshots and a case study suitable for the portfolio.
+- [x] Verify production preview and direct `/app` navigation: 23 tests passed against the built artifact.
+- [x] Add nine final screenshots, a capture manifest, and a portfolio case study.
 
-**Gate:** remains open until production preview and portfolio material are verified.
+**Gate:** passed for the current Chromium verification scope; see release limitations.
 
 ## M3 — Deploy and handoff
 
-- [ ] Initialize and review the project's Git history, then publish the source repository.
-- [ ] Deploy the static build.
-- [ ] Verify the public URL on phone and desktop, including direct app navigation.
-- [ ] Record URL, verification date, and known limitations in README.
+- [x] Owner initialized and published the source repository; local and remote HEAD `589d642` were verified.
+- [x] Owner deployed the static build to Vercel.
+- [x] Verify public desktop and phone viewport smoke journeys, including direct `/app` navigation.
+- [x] Record URL, verification date and known limitations in README.
+- [ ] Publish the new local handoff documents, screenshots and test configuration.
 - [ ] Link the finished project from the portfolio after the case study is ready.
 
-**Gate:** a reviewer can open the demo, use CRUD, and find source and documentation.
+**Gate:** demo and source are public; the final handoff package still awaits publication and a link from the owner's portfolio.

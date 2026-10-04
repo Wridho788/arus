@@ -16,20 +16,36 @@ npm run build
 
 Use Node.js 22.12 or later, as required by the current Vite line. The app runs locally without environment variables or network services after dependencies are installed.
 
-## Verification status and next step
+## Verification and release commands
 
-Tasks 1–3 were completed locally on 2026-10-04. Chromium and its headless shell are available. The suite includes 12 unit tests and 21 Chromium E2E tests; see the [verification record](VERIFICATION.md) for results and limitations.
-
-For a fresh machine, install the matching browser once before running E2E:
+Tasks 1–5 were completed locally on 2026-10-04. Chromium and its headless shell are available. The suite has 12 unit tests, 21 development browser tests and two additional release smoke tests. See [MVP verification](VERIFICATION.md) and [release verification](portfolio/RELEASE_VERIFICATION.md).
 
 ```powershell
 npx playwright install chromium
 npm run test:e2e
+npm run build
+npm run test:production
+npm run capture:portfolio
 ```
 
-Playwright uses one worker to limit memory use, zero retries, a 60-second test budget (120 seconds for responsive walkthroughs) and a 10-second action timeout. The responsive tests write QA screenshots to `test-results/`; later runs replace those files. The current tests exercise the Vite development server, including React Strict Mode.
+Playwright uses one worker and zero retries. The development suite targets Vite with React Strict Mode; the production suite runs all 23 tests against the static artifact on port 4175. Production-only checks verify direct routes, successful asset responses and absence of the Vite development client. Build before running production tests or captures.
 
-Next, verify the production preview and direct `/app` navigation as task 4. Follow the remaining items in [Milestones](MILESTONES.md#next-actions). Do not treat a successful build as a production-browser verification.
+For the owner's existing Vercel deployment:
+
+```powershell
+$env:PLAYWRIGHT_BASE_URL = 'https://arus-web.vercel.app'
+try {
+  npm run test:production
+} finally {
+  Remove-Item Env:PLAYWRIGHT_BASE_URL
+}
+```
+
+A deployed base URL runs only the two release smoke journeys, with no local web server. All records are isolated within the test browser contexts.
+
+QA screenshots are regenerated under `test-results/`. Final portfolio screenshots live in `docs/portfolio/screenshots/`; `capture:portfolio` starts its own production preview on port 4176 and replaces those nine PNGs and their manifest. Inspect the images after any UI changes. Local preview and the public deployment use separate browser origins and therefore separate saved data.
+
+The remaining handoff is publishing the new documentation/testing materials and linking the case study from the owner's portfolio. No deployment is required to reproduce the current verified application behavior. See [Milestones](MILESTONES.md#next-actions).
 
 ## Working rules
 

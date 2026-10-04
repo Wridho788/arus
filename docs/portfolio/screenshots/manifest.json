@@ -1,0 +1,108 @@
+{
+  "capturedAt": "2026-10-04T07:44:07.560Z",
+  "source": "Local Vite production preview",
+  "demoDate": "2026-10-15",
+  "browser": "153.0.8010.12",
+  "assets": [
+    {
+      "file": "/assets/index-mtFEI9lN.js",
+      "sha256": "368efbb4957b5c45065cad72234e6ef96db788b22d5cc65a77279235ceba4685"
+    },
+    {
+      "file": "/assets/index-BC-hUj3i.css",
+      "sha256": "ca933b4634eb91a1ec294c9b0aba5051d44ae4c8305db34a6817dd303a91e51e"
+    }
+  ],
+  "captures": [
+    {
+      "file": "landing-desktop.png",
+      "screen": "landing",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "bytes": 396726,
+      "sha256": "91a38d787618f0cb7815226a64989368608a049d8d1611ceacd25657cfc52530"
+    },
+    {
+      "file": "dashboard-desktop.png",
+      "screen": "dashboard",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "bytes": 143329,
+      "sha256": "ebd0745c0ac690d2967ee8fb11a24739fa737524874456945b2c1dd32ed1cbad"
+    },
+    {
+      "file": "transactions-desktop.png",
+      "screen": "transactions",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "bytes": 116743,
+      "sha256": "1cff67719f68790d511cebe7974dfe859a15a489eca233f59caeab79fee1c674"
+    },
+    {
+      "file": "budgets-desktop.png",
+      "screen": "budgets",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "bytes": 110090,
+      "sha256": "9837dc697cae0e7cd3b972d2c1b0a6effc12327707b7a83303cc4d2bc7fa65e9"
+    },
+    {
+      "file": "dashboard-tablet.png",
+      "screen": "dashboard",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "bytes": 134571,
+      "sha256": "1c61dea730839b284395186e52c10887b3a150ca8d9dedccd17daef21ac77e57"
+    },
+    {
+      "file": "landing-phone.png",
+      "screen": "landing",
+      "viewport": {
+        "width": 360,
+        "height": 780
+      },
+      "bytes": 260761,
+      "sha256": "ae61664b96b4a77b1a7d88126a4e0c0446f27566b288278fa63503599d0255ba"
+    },
+    {
+      "file": "dashboard-phone.png",
+      "screen": "dashboard",
+      "viewport": {
+        "width": 360,
+        "height": 780
+      },
+      "bytes": 110568,
+      "sha256": "5763d3b66dce4b815c5bb217baf952d9a57b1937b2f8ca020d9e3b566937c10b"
+    },
+    {
+      "file": "transactions-phone.png",
+      "screen": "transactions",
+      "viewport": {
+        "width": 360,
+        "height": 780
+      },
+      "bytes": 99106,
+      "sha256": "222bcc51426ba7834332db2a666bbd85dbf7805caec5381f804d4b77d4b7684f"
+    },
+    {
+      "file": "budgets-phone.png",
+      "screen": "budgets",
+      "viewport": {
+        "width": 360,
+        "height": 780
+      },
+      "bytes": 82487,
+      "sha256": "75a940747cca25fa3e87663a2e37703cd0a5b5f83bbda186b78785ecf6d49cc5"
+    }
+  ]
+}

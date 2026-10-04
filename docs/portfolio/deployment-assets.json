@@ -1,0 +1,20 @@
+{
+  "verifiedAt": "2026-10-04T07:41:12.818Z",
+  "deployment": "https://arus-web.vercel.app",
+  "assets": [
+    {
+      "file": "/assets/index-mtFEI9lN.js",
+      "status": 200,
+      "localSha256": "368efbb4957b5c45065cad72234e6ef96db788b22d5cc65a77279235ceba4685",
+      "deployedSha256": "368efbb4957b5c45065cad72234e6ef96db788b22d5cc65a77279235ceba4685",
+      "match": true
+    },
+    {
+      "file": "/assets/index-BC-hUj3i.css",
+      "status": 200,
+      "localSha256": "ca933b4634eb91a1ec294c9b0aba5051d44ae4c8305db34a6817dd303a91e51e",
+      "deployedSha256": "ca933b4634eb91a1ec294c9b0aba5051d44ae4c8305db34a6817dd303a91e51e",
+      "match": true
+    }
+  ]
+}

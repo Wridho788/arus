@@ -56,10 +56,10 @@ Screenshot review covered landing, dashboard, transaction and budget lists, and 
 - A keyboard regression exposed inconsistent initial focus; explicit dialog focus handling fixed it.
 - Computed primary-text contrast checks identified pale landing/navigation copy, which was darkened while keeping the existing palette.
 
-## Remaining release work
+## Follow-up status
 
-- Task 4: production preview and direct navigation to `/app` against the built artifact.
-- Task 5: portfolio screenshots, case study and publication-ready documentation.
-- Task 6: public source, deployment and verification of public URLs.
-- The browser matrix is Chromium with emulated viewport sizes. Physical phone behavior, Firefox, Safari and assistive-technology testing remain unverified.
-- No Git repository exists yet, so changes were compared with a local baseline copy rather than a Git diff. No source publication, commit or deployment was performed.
+Tasks 4–5 were subsequently completed on 2026-10-04: production preview, public smoke verification, final screenshots and case study. See [release verification](portfolio/RELEASE_VERIFICATION.md) for the separate evidence.
+
+The browser matrix remains Chromium with emulated viewport sizes. Physical phones, Firefox, Safari and assistive-technology testing remain unverified.
+
+At the task 2–3 baseline no Git repository existed. The owner subsequently initialized and published [the source repository](https://github.com/Wridho788/arus) and deployed [the demo](https://arus-web.vercel.app/app). New handoff material in the current checkout has not been pushed by this task.

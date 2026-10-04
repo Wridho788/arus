@@ -1,0 +1,62 @@
+import { test, expect } from '@playwright/test';
+import { addExpense, expectMoney, expectNoOverflow, navigate } from '../helpers';
+
+for (const viewport of [{ width: 1440, height: 900 }, { width: 360, height: 780 }]) {
+  test(`production routes and persisted CRUD at ${viewport.width}px`, async ({ page }) => {
+    test.setTimeout(120_000);
+    const runtimeErrors: string[] = [];
+    page.on('pageerror', (error) => runtimeErrors.push(error.message));
+    await page.clock.setFixedTime(new Date('2026-10-15T10:00:00+07:00'));
+    await page.setViewportSize(viewport);
+    const landing = await page.goto('/', { waitUntil: 'domcontentloaded' });
+    expect(landing?.status()).toBe(200);
+    await expect(page.getByRole('heading', { name: /Uangmu lebih jelas/ })).toBeVisible();
+    const html = await landing!.text();
+    expect(html).not.toContain('/@vite/client');
+    const assets = [...html.matchAll(/(?:src|href)="(\/assets\/[^"]+)"/g)].map((match) => match[1]);
+    expect(assets.length).toBeGreaterThanOrEqual(2);
+    for (const asset of assets) expect((await page.request.get(asset)).status()).toBe(200);
+    await expectNoOverflow(page);
+    // Direct URL entry proves the host rewrite works without landing navigation.
+    const app = await page.goto('/app', { waitUntil: 'domcontentloaded' });
+    expect(app?.status()).toBe(200);
+    await expect(page.getByRole('heading', { name: 'Ringkasan keuangan' })).toBeVisible();
+    await expectNoOverflow(page);
+    await addExpense(page, 'Verifikasi produksi', '50000');
+    await expectMoney(page.locator('.summary-card').filter({ hasText: 'Total pengeluaran' }), '4.061.000');
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await navigate(page, 'Transaksi');
+    const row = page.locator('.transaction-row').filter({ hasText: 'Verifikasi produksi' });
+    await expectMoney(row, '50.000');
+    await row.getByRole('button', { name: /^Edit / }).click();
+    await page.getByRole('dialog').getByLabel('Nominal (Rp)').fill('70000');
+    await page.getByRole('dialog').getByRole('button', { name: 'Simpan perubahan' }).click();
+    await expectMoney(row, '70.000');
+    page.once('dialog', (confirmation) => confirmation.accept());
+    await row.getByRole('button', { name: /^Hapus / }).click();
+    await expect(row).toHaveCount(0);
+    await navigate(page, 'Anggaran');
+    await page.getByRole('button', { name: 'Buat anggaran', exact: true }).click();
+    const budget = page.getByRole('dialog');
+    await budget.getByRole('combobox', { name: 'Kategori', exact: true }).selectOption('health');
+    await budget.getByLabel('Batas pengeluaran (Rp)').fill('500000');
+    await budget.getByRole('button', { name: 'Buat anggaran', exact: true }).click();
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await navigate(page, 'Anggaran');
+    const card = page.locator('.budget-card').filter({ hasText: 'Kesehatan' });
+    await expectMoney(card, '500.000');
+    await card.getByRole('button', { name: /^Edit / }).click();
+    await page.getByRole('dialog').getByLabel('Batas pengeluaran (Rp)').fill('600000');
+    await page.getByRole('dialog').getByRole('button', { name: 'Simpan perubahan' }).click();
+    await expectMoney(card, '600.000');
+    page.once('dialog', (confirmation) => confirmation.accept());
+    await card.getByRole('button', { name: /^Hapus / }).click();
+    await expect(card).toHaveCount(0);
+    const menu = page.getByRole('button', { name: 'Buka menu', exact: true });
+    if (await menu.isVisible()) await menu.click();
+    page.once('dialog', (confirmation) => confirmation.accept());
+    await page.getByRole('button', { name: 'Atur ulang data contoh' }).click();
+    await expectMoney(page.locator('.summary-card').filter({ hasText: 'Total pengeluaran' }), '4.011.000');
+    expect(runtimeErrors).toEqual([]);
+  });
+}
